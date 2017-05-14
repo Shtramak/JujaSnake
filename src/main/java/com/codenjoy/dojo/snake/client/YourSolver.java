@@ -27,6 +27,7 @@ import com.codenjoy.dojo.client.Direction;
 import com.codenjoy.dojo.client.Solver;
 import com.codenjoy.dojo.client.WebSocketRunner;
 import com.codenjoy.dojo.services.Dice;
+import com.codenjoy.dojo.services.Point;
 import com.codenjoy.dojo.services.RandomDice;
 
 /**
@@ -48,7 +49,33 @@ public class YourSolver implements Solver<Board> {
         this.board = board;
         System.out.println(board.toString());
 
-        return Direction.DOWN.toString();
+        Point head = board.getHead();
+        Point apple = board.getApples().get(0);
+
+        int headX = head.getX();
+        int headY = head.getY();
+
+        int appleX = apple.getX();
+        int appleY = apple.getY();
+
+        return movePriority(appleX, appleY, headX, headY).toString();
+    }
+
+    private Direction movePriority(int appleX, int appleY, int headX, int headY) {
+
+        if ((appleX > headX && appleY < headY) || (appleX > headX && appleY > headY)) return Direction.RIGHT;
+
+        if ((appleX < headX && appleY > headY) || (appleX < headX && appleY < headY)) return Direction.LEFT;
+
+        if (appleX == headX && appleY < headY) return Direction.UP;
+
+        if (appleX > headX && appleY == headY) return Direction.RIGHT;
+
+        if (appleX == headX && appleY > headY) return Direction.DOWN;
+
+        if (appleX < headX && appleY == headY) return Direction.LEFT;
+
+        return Direction.RIGHT;
     }
 
     public static void main(String[] args) {
