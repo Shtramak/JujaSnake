@@ -58,10 +58,19 @@ public class YourSolver implements Solver<Board> {
         int appleX = apple.getX();
         int appleY = apple.getY();
 
-        return movePriority(appleX, appleY, headX, headY).toString();
+        return directionPriority().toString();
     }
 
-    private Direction movePriority(int appleX, int appleY, int headX, int headY) {
+    private Direction directionPriority() {
+
+        Point head = board.getHead();
+        Point apple = board.getApples().get(0);
+
+        int headX = head.getX();
+        int headY = head.getY();
+
+        int appleX = apple.getX();
+        int appleY = apple.getY();
 
         if ((appleX > headX && appleY < headY) || (appleX > headX && appleY > headY)) return Direction.RIGHT;
 
@@ -75,7 +84,11 @@ public class YourSolver implements Solver<Board> {
 
         if (appleX < headX && appleY == headY) return Direction.LEFT;
 
-        return Direction.RIGHT;
+        return board.getSnakeDirection();
+    }
+
+    private boolean isPermitedDirection(Direction snake, Direction expected){
+        return  true;
     }
 
     public static void main(String[] args) {
