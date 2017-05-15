@@ -47,19 +47,21 @@ public class YourSolver implements Solver<Board> {
     @Override
     public String get(Board board) {
         this.board = board;
-        System.out.println(board.toString());
+//        System.out.println(board.toString());
 
+/*
         Point head = board.getHead();
         Point apple = board.getApples().get(0);
+*/
 
-        int headX = head.getX();
-        int headY = head.getY();
-
-        int appleX = apple.getX();
-        int appleY = apple.getY();
-
-        return directionPriority().toString();
+        return givePermittedDirection().toString();
     }
+
+    /**
+     * Method which defines the priority for snake direction
+     *
+     * @return best Direction for snake movement according to current algorithm
+     */
 
     private Direction directionPriority() {
 
@@ -87,8 +89,54 @@ public class YourSolver implements Solver<Board> {
         return board.getSnakeDirection();
     }
 
-    private boolean isPermitedDirection(Direction snake, Direction expected){
-        return  true;
+    /**
+     * Method for cheking if expected direction is permitted
+     *
+     * @param snake    current snake direction
+     * @param expected expected direction to apple
+     * @return true if expected direction is not back direction for current snake direction
+     */
+
+    private boolean isPermittedDirection(Direction snake, Direction expected) {
+
+        if (snake == Direction.UP && expected == Direction.DOWN) return false;
+
+        if (snake == Direction.DOWN && expected == Direction.UP) return false;
+
+        if (snake == Direction.RIGHT && expected == Direction.LEFT) return false;
+
+        if (snake == Direction.LEFT && expected == Direction.RIGHT) return false;
+
+        return true;
+    }
+
+    /**
+     *
+     * @return permitted direction for snake with some extra verification
+     */
+
+    private Direction givePermittedDirection() {
+
+        Direction snakeDirection = board.getSnakeDirection();
+        if (!isPermittedDirection(snakeDirection, directionPriority())) {
+
+            if (snakeDirection == Direction.RIGHT || snakeDirection == Direction.LEFT) {
+                if (board.getHead().getY() > board.getApples().get(0).getY()) {
+                    return Direction.UP;
+                } else {
+                    return Direction.DOWN;
+                }
+            }
+            if (snakeDirection == Direction.UP || snakeDirection == Direction.DOWN) {
+                if (board.getHead().getX() > board.getApples().get(0).getX()) {
+                    return Direction.LEFT;
+                } else {
+                    return Direction.RIGHT;
+                }
+            }
+        }
+
+        return directionPriority();
     }
 
     public static void main(String[] args) {
