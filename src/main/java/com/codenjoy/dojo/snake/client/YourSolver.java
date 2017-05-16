@@ -28,6 +28,7 @@ import com.codenjoy.dojo.client.Solver;
 import com.codenjoy.dojo.client.WebSocketRunner;
 import com.codenjoy.dojo.services.Dice;
 import com.codenjoy.dojo.services.Point;
+import com.codenjoy.dojo.services.PointImpl;
 import com.codenjoy.dojo.services.RandomDice;
 
 /**
@@ -55,19 +56,31 @@ public class YourSolver implements Solver<Board> {
     /**
      * Method which defines the priority for snake direction
      *
-     * @return best Direction for snake movement according to current algorithm
+     * @return best Direction for snake movement according to the shortest way without any additional verifications
      */
 
     private Direction directionPriority() {
 
         Point head = board.getHead();
-        Point apple = board.getApples().get(0);
+        Point realApple = board.getApples().get(0);
 
         int headX = head.getX();
         int headY = head.getY();
 
-        int appleX = apple.getX();
-        int appleY = apple.getY();
+        Point checkpoint = appleWayPoint(headX, headY, realApple.getX(), realApple.getY());
+
+        int appleX = checkpoint.getX();
+        int appleY = checkpoint.getY();
+
+        if (headX == realApple.getX()) {
+            appleX = realApple.getX();
+            appleY = realApple.getY();
+        }
+
+        if (headY == realApple.getY()) {
+            appleX = realApple.getX();
+            appleY = realApple.getY();
+        }
 
         if (appleX > headX && appleY < headY) {
             if (board.getSnakeDirection() == Direction.UP) return Direction.UP;
@@ -125,7 +138,7 @@ public class YourSolver implements Solver<Board> {
     }
 
     /**
-     * @return permitted direction for snake with some extra verification
+     * @return permitted direction for snake with some extra verifications
      */
 
     private Direction getPermittedDirection() {
@@ -150,6 +163,53 @@ public class YourSolver implements Solver<Board> {
         }
 
         return directionPriority();
+    }
+
+    /**
+     * @param headX  x coordinate of the snake head
+     * @param headY  y coordinate of the snake head
+     * @param appleX x coordinate of the real apple
+     * @param appleY y coordinate of the real apple
+     * @return the focus point for the snake also in cases when stone and apple are on the same axis
+     */
+
+    private Point appleWayPoint(int headX, int headY, int appleX, int appleY) {
+        int appleWayX = appleX;
+        int appleWayY = appleY;
+
+        Point stone = board.getStones().get(0);
+
+        if (appleX == stone.getX()) {
+
+            appleWayX = getAppleCoordinate(headX, appleX);
+
+        }
+        if (appleY == stone.getY()) {
+
+            appleWayY = getAppleCoordinate(headY, appleY);
+
+        }
+
+        return new PointImpl(appleWayX, appleWayY);
+    }
+
+    /**
+     * @param headCoord  x or y coordinate of the snake head
+     * @param appleCoord x or y coordinate of the real apple
+     * @return tmp coordinate for snake to focus
+     */
+    private int getAppleCoordinate(int headCoord, int appleCoord) {
+        if (headCoord > appleCoord) {
+            return appleCoord + 1;
+        } else if (headCoord < appleCoord) {
+            return appleCoord - 1;
+        } else {
+            if (appleCoord != 0) {
+                return appleCoord - 1;
+            } else {
+                return appleCoord + 1;
+            }
+        }
     }
 
     public static void main(String[] args) {
