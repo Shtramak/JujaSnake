@@ -49,12 +49,7 @@ public class YourSolver implements Solver<Board> {
         this.board = board;
 //        System.out.println(board.toString());
 
-/*
-        Point head = board.getHead();
-        Point apple = board.getApples().get(0);
-*/
-
-        return givePermittedDirection().toString();
+        return getPermittedDirection().toString();
     }
 
     /**
@@ -74,9 +69,28 @@ public class YourSolver implements Solver<Board> {
         int appleX = apple.getX();
         int appleY = apple.getY();
 
-        if ((appleX > headX && appleY < headY) || (appleX > headX && appleY > headY)) return Direction.RIGHT;
+        if (appleX > headX && appleY < headY) {
+            if (board.getSnakeDirection() == Direction.UP) return Direction.UP;
 
-        if ((appleX < headX && appleY > headY) || (appleX < headX && appleY < headY)) return Direction.LEFT;
+            return Direction.RIGHT;
+        }
+
+        if (appleX > headX && appleY > headY) {
+            if (board.getSnakeDirection() == Direction.DOWN) return Direction.DOWN;
+
+            return Direction.RIGHT;
+        }
+
+        if (appleX < headX && appleY > headY) {
+            if (board.getSnakeDirection() == Direction.DOWN) return Direction.DOWN;
+            return Direction.LEFT;
+        }
+
+        if (appleX < headX && appleY < headY) {
+            if (board.getSnakeDirection() == Direction.UP) return Direction.UP;
+
+            return Direction.LEFT;
+        }
 
         if (appleX == headX && appleY < headY) return Direction.UP;
 
@@ -111,11 +125,10 @@ public class YourSolver implements Solver<Board> {
     }
 
     /**
-     *
      * @return permitted direction for snake with some extra verification
      */
 
-    private Direction givePermittedDirection() {
+    private Direction getPermittedDirection() {
 
         Direction snakeDirection = board.getSnakeDirection();
         if (!isPermittedDirection(snakeDirection, directionPriority())) {
@@ -129,9 +142,9 @@ public class YourSolver implements Solver<Board> {
             }
             if (snakeDirection == Direction.UP || snakeDirection == Direction.DOWN) {
                 if (board.getHead().getX() > board.getApples().get(0).getX()) {
-                    return Direction.LEFT;
-                } else {
                     return Direction.RIGHT;
+                } else {
+                    return Direction.LEFT;
                 }
             }
         }
