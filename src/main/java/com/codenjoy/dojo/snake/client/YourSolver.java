@@ -154,15 +154,24 @@ public class YourSolver implements Solver<Board> {
                 }
             }
             if (snakeDirection == Direction.UP || snakeDirection == Direction.DOWN) {
-                if (board.getHead().getX() > board.getApples().get(0).getX()) {
+                if ((board.getHead().getX() > board.getApples().get(0).getX())) {
                     return Direction.RIGHT;
+
+                } else if (board.getHead().getX() == board.getApples().get(0).getX()) {
+
+                    if (board.getHead().getX() == 1) return Direction.RIGHT;
+
+                    return Direction.LEFT;
+
                 } else {
+
                     return Direction.LEFT;
                 }
             }
         }
 
         return directionPriority();
+
     }
 
     /**
@@ -179,12 +188,12 @@ public class YourSolver implements Solver<Board> {
 
         Point stone = board.getStones().get(0);
 
-        if (appleX == stone.getX()) {
+        if (appleX == stone.getX() && hasStoneInfluence()) {
 
             appleWayX = getAppleCoordinate(headX, appleX);
 
         }
-        if (appleY == stone.getY()) {
+        if (appleY == stone.getY() && hasStoneInfluence()) {
 
             appleWayY = getAppleCoordinate(headY, appleY);
 
@@ -193,11 +202,28 @@ public class YourSolver implements Solver<Board> {
         return new PointImpl(appleWayX, appleWayY);
     }
 
+    private boolean hasStoneInfluence() {
+
+        Point stone = board.getStones().get(0);
+        Point apple = board.getApples().get(0);
+
+        if (stone.getY() > apple.getY() && stone.getY() > board.getHead().getY()) return false;
+
+        if (stone.getY() < apple.getY() && stone.getY() < board.getHead().getY()) return false;
+
+        if (stone.getX() > apple.getX() && stone.getX() > board.getHead().getX()) return false;
+
+        if (stone.getX() < apple.getX() && stone.getX() < board.getHead().getX()) return false;
+
+        return true;
+    }
+
     /**
      * @param headCoord  x or y coordinate of the snake head
      * @param appleCoord x or y coordinate of the real apple
      * @return tmp coordinate for snake to focus
      */
+
     private int getAppleCoordinate(int headCoord, int appleCoord) {
         if (headCoord > appleCoord) {
             return appleCoord + 1;

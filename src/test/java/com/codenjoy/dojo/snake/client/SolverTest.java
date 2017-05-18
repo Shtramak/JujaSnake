@@ -82,6 +82,27 @@ public class SolverTest {
 
     }
 
+    @Test
+    public void sameDirrectionWithApple(){
+
+        asertAI("☼☼☼☼☼☼☼" +
+                "☼     ☼" +
+                "☼▲    ☼" +
+                "☼╙    ☼" +
+                "☼ ☻   ☼" +
+                "☼☺    ☼" +
+                "☼☼☼☼☼☼☼", Direction.RIGHT);
+
+        asertAI("☼☼☼☼☼☼☼" +
+                "☼     ☼" +
+                "☼    ▲☼" +
+                "☼    ╙☼" +
+                "☼ ☻   ☼" +
+                "☼    ☺☼" +
+                "☼☼☼☼☼☼☼", Direction.LEFT);
+
+    }
+
     private void asertAI(String board, Direction expected) {
         String actual = ai.get(board(board));
         assertEquals(expected.toString(), actual);
